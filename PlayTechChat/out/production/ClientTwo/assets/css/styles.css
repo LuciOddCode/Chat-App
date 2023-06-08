@@ -1,0 +1,16 @@
+.sidePanel-background-color{
+    -fx-background-color: #dc05ff;
+}
+
+.active-user-background-color{
+    -fx-background-color: #a105b0;
+}
+
+.chat-panel-background-color{
+    -fx-background-color: rgb(255, 255, 255);
+}
+
+.messageShow{
+    background-color : #1dff1d;
+    border-radius : 20px;
+}
