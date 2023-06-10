@@ -12,14 +12,16 @@ public class AppInitializer extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage primaryStage)  {
+
         try {
             primaryStage.setScene(new Scene(FXMLLoader
                     .load(getClass().getResource("/view/ServerForm.fxml"))));
-            primaryStage.show();
         } catch (IOException e) {
             e.printStackTrace();
         }
+        primaryStage.show();
+
 
     }
 }

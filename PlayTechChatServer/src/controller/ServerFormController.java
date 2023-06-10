@@ -11,12 +11,11 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ServerFormController {
     public Label lblServer;
@@ -33,7 +32,7 @@ public class ServerFormController {
     public HBox hBoxClientTwo;
     public Label lblIncomingMessage;
 
-    public Label newMessage;
+    public Label newMessage=new Label("");
     public String sender;
     public AnchorPane paneServer;
 
@@ -41,52 +40,116 @@ public class ServerFormController {
     Socket socket;
     DataInputStream dataInputStream;
     DataOutputStream dataOutputStream;
+    public static List <ClientHandler> clients;
+
 
     public void initialize(){
-        new Thread(()->{
+        clients=new ArrayList<>();
+
             try {
 
-                serverSocket = new ServerSocket(3000);
-                socket = serverSocket.accept();
-                sendAMessage("Client Accepted");
+                /*serverSocket = new ServerSocket(3000);
+                socket = serverSocket.accept();*/
 
-                InputStream inputStream = socket.getInputStream();
-                ObjectInputStream objectInputStream=new ObjectInputStream(inputStream);
-               while (true){
+                start(3000);
+
+               /* InputStream inputStream = socket.getInputStream();
+                ObjectInputStream objectInputStream=new ObjectInputStream(inputStream);*/
+              /* while (true){
                    Object receivedObject = objectInputStream.readObject();
-                   Byte byteObject = (Byte) receivedObject;
+                   byte byteObject = 0;
 
+                   if (receivedObject instanceof ImageView) {
+                       byteObject = (Byte) receivedObject;
+
+                       byte[] imageData = new byte[]{byteObject};
+                       Image image = new Image(new ByteArrayInputStream(imageData));
+                       ImageView view = new ImageView(image);
+
+                       HBox newHBox = new HBox();
+                       view.setFitHeight(300);
+                       view.setFitWidth(600);
+                       newHBox.setAlignment(Pos.CENTER_LEFT);
+
+                       newHBox.getChildren().add(view);
+
+                       vBoxClientTwo.getChildren().add(newHBox);
+                   }
 
                    if (byteObject==0){
+                       String message = objectInputStream.readUTF();
+                       lblIncomingMessage=new Label("");
+                       lblIncomingMessage.setText("Client : " + message);
+                       HBox newHBox = new HBox();
+                       newHBox.getChildren().clear();
+                       newHBox.setAlignment(Pos.CENTER_LEFT);
+
+                       newHBox.getChildren().add(lblClient1);
+                       vBoxClientTwo.getChildren().add(newHBox);
                        break;
                    }
 
                }
-
-                objectInputStream.close();
+*/
+                /*objectInputStream.close();
                 socket.close();
-                serverSocket.close();
+                serverSocket.close();*/
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }).start();
+
     }
 
     public void sendMessageOnAction(ActionEvent actionEvent) {
+
         sendAMessage(txtTextTyper.getText());
     }
 
     private void sendAMessage(String message){
+
+
         newMessage.setText(message);
-        vBoxClientTwo.setAlignment(Pos.CENTER_RIGHT);
-        vBoxClientTwo.getChildren().add(newMessage);
+        hBoxClientTwo=new HBox();
+        hBoxClientTwo.setAlignment(Pos.CENTER_RIGHT);
+        hBoxClientTwo.getChildren().add(newMessage);
+        vBoxClientTwo.getChildren().add(hBoxClientTwo);
 
     }
 
     private void receivedAMessage(String message){
-        newMessage.setText(message);
-        vBoxClientTwo.setAlignment(Pos.CENTER_LEFT);
-        vBoxClientTwo.getChildren().add(newMessage);
+
+        try {
+
+            newMessage.setText(message);
+           /* .write(message);*/
+            dataOutputStream.flush();
+            txtTextTyper.clear();
+            hBoxClientTwo=new HBox();
+            hBoxClientTwo.setAlignment(Pos.CENTER_LEFT);
+            hBoxClientTwo.getChildren().add(newMessage);
+            vBoxClientTwo.getChildren().add(hBoxClientTwo);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+
     }
+
+
+    void start(int port){
+        try {
+            ServerSocket newServerSocket = new ServerSocket(port);
+            while (true){
+                Socket clientSocket =newServerSocket.accept();
+                ClientHandler clientHandler=new ClientHandler(clientSocket);
+                clients.add(clientHandler);
+                clientHandler.start();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

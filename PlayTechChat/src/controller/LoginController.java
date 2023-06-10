@@ -26,7 +26,7 @@ public class LoginController {
     public void straightToLogin(ActionEvent actionEvent) {
         boolean checkPassword = checkPassword(txtUserName.getText(), txtPassword.getText());
         if (checkPassword){
-            Navigation.navigate
+            Navigation.navigate("CLIENTONE",paneLogin);
         }
     }
 

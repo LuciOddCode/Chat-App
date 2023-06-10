@@ -15,7 +15,7 @@
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.Client1FormController">
+<AnchorPane fx:id="paneClientOne" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.Client1FormController">
    <children>
       <SplitPane dividerPositions="0.29797979797979796" layoutX="6.0" layoutY="6.0" prefHeight="386.0" prefWidth="586.0">
         <items>
@@ -114,14 +114,14 @@
                <children>
                   <HBox alignment="CENTER" layoutX="6.0" layoutY="337.0" prefHeight="50.0" prefWidth="395.0">
                      <children>
-                        <ImageView fx:id="imgEmoji" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="imgEmoji" fitHeight="30.0" fitWidth="30.0" onDragDetected="#showEmojiOnClick" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../assets/img/icons8-user-100.png" />
                            </image>
                         </ImageView>
-                        <TextField fx:id="txtReplyBox" onAction="#SendWithEnter" prefHeight="25.0" prefWidth="281.0" />
-                        <Button fx:id="btnImageChooser" mnemonicParsing="false" prefHeight="25.0" prefWidth="36.0" text="Button" />
-                        <Button fx:id="btnSendMessage" mnemonicParsing="false" onAction="#sendMessageOnAction" prefHeight="25.0" prefWidth="36.0" text="Button" />
+                        <TextField fx:id="txtTextTyper" prefHeight="25.0" prefWidth="281.0" />
+                        <Button fx:id="btnImageChooser" mnemonicParsing="false" onAction="#sendImageOnAction" prefHeight="25.0" prefWidth="36.0" text="img" />
+                        <Button fx:id="btnSendMessage" mnemonicParsing="false" onAction="#sendMessageOnAction" prefHeight="25.0" prefWidth="36.0" text="send" />
                      </children>
                   </HBox>
                   <ScrollPane layoutX="14.0" layoutY="14.0" prefHeight="318.0" prefWidth="378.0" styleClass="chat-panel-background-color" stylesheets="@../assets/css/styles.css">

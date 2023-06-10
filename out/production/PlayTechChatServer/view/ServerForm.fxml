@@ -15,7 +15,7 @@
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.Client1FormController">
+<AnchorPane fx:id="paneServer" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.ServerFormController">
    <children>
       <SplitPane dividerPositions="0.29797979797979796" layoutX="6.0" layoutY="6.0" prefHeight="386.0" prefWidth="586.0">
         <items>
@@ -119,7 +119,7 @@
                               <Image url="@../assets/img/icons8-user-100.png" />
                            </image>
                         </ImageView>
-                        <TextField fx:id="txtReplyBox" onAction="#SendWithEnter" prefHeight="25.0" prefWidth="281.0" />
+                        <TextField fx:id="txtTextTyper" prefHeight="25.0" prefWidth="281.0" />
                         <Button fx:id="btnImageChooser" mnemonicParsing="false" prefHeight="25.0" prefWidth="36.0" text="Button" />
                         <Button fx:id="btnSendMessage" mnemonicParsing="false" onAction="#sendMessageOnAction" prefHeight="25.0" prefWidth="36.0" text="Button" />
                      </children>

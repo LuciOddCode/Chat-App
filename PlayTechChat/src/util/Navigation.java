@@ -10,7 +10,7 @@ public class Navigation {
     private static AnchorPane pane;
 
 
-    public void navigate(String route,AnchorPane pane){
+    public static void navigate(String route,AnchorPane pane){
         Navigation.pane=pane;
 //        Navigation.pane.getChildren().clear();
 
@@ -40,7 +40,7 @@ public class Navigation {
         }
     }
 
-    private void initUI(String location) {
+    private static void initUI(String location) {
         try {
             Navigation.pane.getChildren().add(FXMLLoader
                     .load(Navigation.class.getResource("/view/" + location)));

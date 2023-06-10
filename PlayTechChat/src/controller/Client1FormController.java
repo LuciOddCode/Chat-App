@@ -1,6 +1,7 @@
 package controller;
 
 import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -13,77 +14,95 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 
+import javax.swing.*;
+import java.awt.*;
 import java.io.*;
-import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Client1FormController {
-    public Label lblServer;
-    public Circle serverActiveDot;
-    public Label lblClient1;
-    public Circle clientActiveDot;
-    public Label lblClient2;
-    public Circle clientTwoActiveDot;
-    public ImageView imgEmoji;
-    public TextField txtTextTyper;
-    public Button btnImageChooser;
-    public Button btnSendMessage;
-    public VBox vBoxClientTwo;
-    public HBox hBoxClientTwo;
-    public Label lblIncomingMessage;
-    public AnchorPane paneClientOne;
 
-    DataOutputStream dataOutputStream;
     DataInputStream dataInputStream;
+    ObjectOutputStream dataOutputStream;
     Socket socket;
-    String message;
+    String message = "";
     Byte byteObject;
     Object receivedObject;
     ObjectInputStream objectInputStream;
     InputStream inputStream;
     ImageView view;
-
-    HBox newHBoxClientTwo=new HBox();
+    @FXML
+    private Button btnImageChooser;
+    @FXML
+    private Button btnSendMessage;
+    @FXML
+    private Circle clientActiveDot;
+    @FXML
+    private Circle clientTwoActiveDot;
+    @FXML
+    private HBox hBoxClientTwo;
+    @FXML
+    private ImageView imgEmoji;
+    @FXML
+    private Label lblClient1;
+    @FXML
+    private Label lblClient2;
+    @FXML
+    private Label lblIncomingMessage;
+    @FXML
+    private Label lblServer;
+    @FXML
+    private AnchorPane paneClientOne;
+    @FXML
+    private Circle serverActiveDot;
+    @FXML
+    private TextField txtTextTyper;
+    @FXML
+    private VBox vBoxClientTwo;
 
     public void initialize() {
-        new Thread(()->{
+        new Thread(() -> {
             try {
-                socket=new Socket("localhost",3000);
-               inputStream=socket.getInputStream();
-
-               objectInputStream=new ObjectInputStream(inputStream);
-               Image userImage= new Image("assets/img/icons8-user-100.png");
-                ImageView user=new ImageView(userImage);
-                while (true){
+                socket = new Socket("localhost", 3000);
+                inputStream = socket.getInputStream();
 
 
-                     receivedObject = objectInputStream.readObject();
+                objectInputStream = new ObjectInputStream(inputStream);
 
-                    if (receivedObject instanceof ImageView){
+                while (true) {
+
+
+                    receivedObject = objectInputStream.readObject();
+
+                    if (receivedObject instanceof ImageView) {
                         byteObject = (Byte) receivedObject;
 
-                        byte [] imageData=new byte[]{byteObject} ;
-                        Image image=new Image(new ByteArrayInputStream(imageData));
-                        view=new ImageView(image);
+                        byte[] imageData = new byte[]{byteObject};
+                        Image image = new Image(new ByteArrayInputStream(imageData));
+                        view = new ImageView(image);
 
-                        view.fitHeightProperty();
-                        hBoxClientTwo.setAlignment(Pos.CENTER_LEFT);
-                        hBoxClientTwo.getChildren().add(user);
-                        hBoxClientTwo.getChildren().add(view);
+                        HBox newHBox = new HBox();
+                        view.setFitHeight(300);
+                        view.setFitWidth(600);
+                        newHBox.setAlignment(Pos.CENTER_LEFT);
 
-                        vBoxClientTwo.getChildren().add(hBoxClientTwo);
-                    }else {
-                        message= objectInputStream.readUTF();
-                        lblIncomingMessage.setText("Client : "+message);
+                        newHBox.getChildren().add(view);
 
-                        vBoxClientTwo.getChildren().clear();
-                        vBoxClientTwo.setAlignment(Pos.CENTER_LEFT);
-                        vBoxClientTwo.getChildren().add(user);
-                        vBoxClientTwo.getChildren().add(lblClient1);
+                        vBoxClientTwo.getChildren().add(newHBox);
+                    } else {
+                        message = objectInputStream.readUTF();
+                        lblIncomingMessage = new Label("");
+                        lblIncomingMessage.setText("Client : " + message);
+                        HBox newHBox = new HBox();
+                        newHBox.getChildren().clear();
+                        newHBox.setAlignment(Pos.CENTER_LEFT);
+
+                        newHBox.getChildren().add(lblClient1);
+                        vBoxClientTwo.getChildren().add(newHBox);
+
                     }
 
 
-                    if (byteObject==0){
+                    if (byteObject == 0) {
                         break;
                     }
 
@@ -99,13 +118,68 @@ public class Client1FormController {
     }
 
     public void sendMessageOnAction(ActionEvent actionEvent) {
+        message = txtTextTyper.getText();
+        try {
+            dataOutputStream = new ObjectOutputStream(socket.getOutputStream());
+            dataOutputStream.writeObject(message);
+            dataOutputStream.flush();
 
+            hBoxClientTwo = new HBox();
+            hBoxClientTwo.setAlignment(Pos.CENTER_RIGHT);
+            hBoxClientTwo.getChildren().add(new Label(message));
+            vBoxClientTwo.getChildren().add(hBoxClientTwo);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void sendImageOnAction(ActionEvent actionEvent) {
 
+        try {
+            JFileChooser fileChooser = new JFileChooser();
+
+            int isFileChoose = fileChooser.showOpenDialog(null);
+
+            if (isFileChoose == JFileChooser.APPROVE_OPTION) {
+                File selectedFile = fileChooser.getSelectedFile();
+                /*BufferedImage bufferedImage = ImageIO.read(selectedFile);*/
+
+                FileInputStream fileInputStream = new FileInputStream(selectedFile);
+
+                byte[] imageData = new byte[(int) selectedFile.length()];
+
+                fileInputStream.read(imageData);
+                dataOutputStream = new ObjectOutputStream(socket.getOutputStream());
+
+                dataOutputStream.writeInt(imageData.length);
+                dataOutputStream.write(imageData);
+                dataOutputStream.flush();
+
+
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void showEmojiOnClick(MouseEvent mouseEvent) {
+        try {
+            Robot robot = new Robot();
+            int sleep = 100;
+            robot.keyPress(524);
+            Thread.sleep(sleep);
+            robot.keyPress(46);
+            Thread.sleep(sleep);
+            robot.keyRelease(46);
+            Thread.sleep(sleep);
+            robot.keyRelease(524);
+
+        } catch (AWTException | InterruptedException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void SendWithEnter(ActionEvent actionEvent) {
     }
 }
