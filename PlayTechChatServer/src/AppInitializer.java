@@ -17,10 +17,11 @@ public class AppInitializer extends Application {
         try {
             primaryStage.setScene(new Scene(FXMLLoader
                     .load(getClass().getResource("/view/ServerForm.fxml"))));
+            primaryStage.show();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        primaryStage.show();
+
 
 
     }

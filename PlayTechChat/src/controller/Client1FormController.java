@@ -121,7 +121,7 @@ public class Client1FormController {
         message = txtTextTyper.getText();
         try {
             dataOutputStream = new ObjectOutputStream(socket.getOutputStream());
-            dataOutputStream.writeObject(message);
+            dataOutputStream.writeUTF(message);
             dataOutputStream.flush();
 
             hBoxClientTwo = new HBox();
